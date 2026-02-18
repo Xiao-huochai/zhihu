@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,maximum-scale=1,minimum-scale,user-scalable=no"
+    />
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/reset.min.css" />
+    <style>
+      html {
+        font-size: 100px;
+      }
+      html,
+      body {
+        min-height: 100%;
+        background: #f4f4f4;
+      }
+      #root {
+        margin: 0 auto;
+        max-width: 750px;
+      }
+      .box {
+        width: 3.28rem;
+        /* html的font-size *3.28为328px 浏览器最小显示12px不能是10px*/
+        height: 1.64rem;
+        line-height: 1.64rem;
+        text-align: center;
+        font-size: 0.4rem;
+        background-color: lightblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="box">我草盒</div>
+    </div>
+    <script>
+      (function () {
+        const computed = () => {
+          let html = document.documentElement,
+            deviceWidth = html.clientWidth,
+            designWidth = 750;
+          if (deviceWidth > 750) {
+            html.style.fontSize = "100px";
+            return;
+          }
+          let ratio = (deviceWidth * 100) / designWidth;
+          html.style.fontSize = ratio + "px";
+        };
+        computed();
+        window.addEventListener("resize", computed);
+      })();
+    </script>
+  </body>
+</html>
