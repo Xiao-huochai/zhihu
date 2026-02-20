@@ -1,9 +1,27 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import pxtorem from "postcss-pxtorem";
+import babel from "vite-plugin-babel";
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    babel({
+      babelConfig: {
+        presets: [
+          [
+            "@babel/preset-env",
+            {
+              targets: {
+                chrome: "49",
+                ios: "10",
+              },
+            },
+          ],
+        ],
+      },
+    }),
+  ],
   css: {
     postcss: {
       plugins: [

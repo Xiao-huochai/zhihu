@@ -1,7 +1,12 @@
 import "lib-flexible";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import "./assets/reset.min.css";
+
+// antd-mobile
+import { ConfigProvider } from "antd-mobile";
+import zhCN from "antd-mobile/es/locales/zh-CN";
+
+import "./main.less";
 /* 处理移动端最大宽度和根字体大小（TS 版本） */
 (function () {
   // 定义核心处理函数，添加完整的 TS 类型
@@ -28,4 +33,8 @@ import "./assets/reset.min.css";
   // 监听窗口大小变化，绑定处理函数（添加事件类型标注）
   window.addEventListener("resize", handleMax);
 })();
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+  <ConfigProvider locale={zhCN}>
+    <App />
+  </ConfigProvider>,
+);
