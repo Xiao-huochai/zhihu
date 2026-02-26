@@ -1,7 +1,12 @@
 import "./app.less";
-
+import { HashRouter } from "react-router-dom";
+import RouterView from "./router";
 function App() {
-  return <div className="box">ciallo</div>;
+  return (
+    <HashRouter>
+      <RouterView />
+    </HashRouter>
+  );
 }
 
 export default App;
