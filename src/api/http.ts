@@ -8,6 +8,7 @@ interface HttpConfig {
   method: string;
   credentials: RequestCredentials;
   headers: Record<string, string> | null;
+  // 对象的所有key和value均为string类型
   body: any;
   params: Record<string, any> | null;
   responseType: string;
