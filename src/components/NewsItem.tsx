@@ -1,3 +1,3 @@
 export default function NewsItem() {
-  return <div>新闻盒子</div>;
+  return <div className="news-item-box">每条新闻</div>;
 }
