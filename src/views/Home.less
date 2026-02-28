@@ -1,0 +1,82 @@
+.home-box {
+  // 轮播图
+  .swiper-box {
+    box-sizing: border-box;
+    width: 750px;
+    height: 750px;
+    background: #ddd;
+    .adm-swiper {
+      height: 100%;
+    }
+    a {
+      display: block;
+      height: 100%;
+    }
+    .adm-image,
+    img {
+      display: block;
+      //   block的元素设置宽度默认为100%
+      height: 100%;
+      width: 100%;
+      .adm-image-tip {
+        svg {
+          width: 20%;
+          height: 20%;
+        }
+      }
+    }
+    .desc {
+      position: absolute;
+      bottom: 40px;
+      z-index: 999;
+      width: 100%;
+      .title {
+        font-size: 36px;
+        color: #fff;
+        padding: 0 30px;
+      }
+      .author {
+        line-height: 50px;
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.7);
+        // 最后一个属性是透明度
+        padding: 0 30px;
+      }
+    }
+    .adm-swiper-indicator {
+      bottom: 20px;
+      left: auto;
+      right: 0;
+      transform: translateX(-30px);
+      .adm-page-indicator-dot {
+        margin: 0 10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .adm-page-indicator-dot-active {
+        width: 40px;
+        border-radius: 50px;
+      }
+    }
+  }
+
+  // 新闻盒子
+  .news-box {
+    padding: 10px 20px;
+    //日期分割线日期的位置
+    .adm-divider-left.adm-divider-horizontal::before {
+      max-width: 2%;
+    }
+  }
+
+  //   加载更多
+  .loadmore-box {
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    background-color: #eee;
+    color: #5e5858;
+    font-size: 24px;
+  }
+}
