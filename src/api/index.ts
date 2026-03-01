@@ -22,6 +22,13 @@ export interface TopStoryType {
   type: number;
   id: number;
 }
+
+// 新闻列表type
+export interface NewsListType {
+  stories: StoryType[];
+  date: string;
+}
+
 // 定义接口返回的完整数据类型
 interface NewsInfoResponseType {
   date: string; // 日期格式为 YYYYMMDD
