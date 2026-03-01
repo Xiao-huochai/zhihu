@@ -41,7 +41,7 @@ const queryNewsLatest = (): Promise<NewsInfoResponseType> =>
   http.get("/api/news_latest");
 
 // 获取往日新闻信息
-const queryNewsBefore = (time: number) => {
+const queryNewsBefore = (time: string): Promise<NewsListType> => {
   return http.get("/api/news_before", {
     params: {
       time,

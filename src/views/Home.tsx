@@ -35,9 +35,34 @@ const Home = function Home() {
   }, []);
   // 第一次渲染得到加载更多的盒子
   useEffect(() => {
-    console.log(loadMore.current);
-  }, []);
+    const obElement = loadMore.current;
+    // 监听的元素
+    if (!obElement) return;
+    const ob = new IntersectionObserver(async (items) => {
+      // isIntersecting 直接判断目标元素是否进入了视口 / 根元素的可见区域
+      // intersectionRatio 作用：表示目标元素可见区域占其总区域的比例，范围是 0 ~ 1
+      // intersectionRect作用：描述目标元素与根元素（视口）的交叉区域的矩形信息（DOMRectReadOnly 对象）。
+      if (items[0].isIntersecting) {
+        // 如果出现在视野里则继续加载对应的元素
+        try {
+          let date = newsList[newsList.length - 1]["date"];
+          let res = await api.queryNewsBefore(date);
+          newsList.push(res);
+          setNewsList([...newsList]);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+    ob.observe(obElement);
 
+    // 组件更新时卸载函数 防止内存泄漏
+    return () => {
+      ob.unobserve(obElement);
+      // 这里如果是loadMore.current会得到null因为组件卸载了 元素不存在(闭包)
+      ob.disconnect();
+    };
+  }, []);
   return (
     <div className="home-box">
       <HomeHead today={today} />
