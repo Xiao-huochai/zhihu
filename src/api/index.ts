@@ -89,10 +89,28 @@ const queryStoryExtra = (id?: string): Promise<NewsStoryExtraType> => {
     },
   });
 };
+
+// 发送验证码
+const sendPhoneCode = (phone: string) => {
+  return http.post("/api/phone_code", {
+    phone,
+  });
+};
+
+// 登录/注册
+const login = (phone: string, code: string) => {
+  return http.post("/api/login", {
+    phone,
+    code,
+  });
+};
+
 const api = {
   queryNewsBefore,
   queryNewsLatest,
   queryNewsInfo,
   queryStoryExtra,
+  sendPhoneCode,
+  login,
 };
 export default api;

@@ -1,8 +1,12 @@
 import NavBarAgain from "../components/NavBarAgain";
-import { Form, Input, Toast, Button } from "antd-mobile";
+import ButtonAgain from "../components/ButtonAgain";
+import { useState } from "react";
+import { Form, Input, Toast } from "antd-mobile";
 import "./Login.less";
 const Login = function Login() {
-  const [FormIns] = Form.useForm();
+  const [FormIns] = Form.useForm(),
+    [disabled, setDisabled] = useState<boolean>(false),
+    [sendText, setSendText] = useState<string>("发送验证码");
   // 返回的是数组包裹的对象因此需要展开
 
   // 自定义表单校验规则
@@ -28,12 +32,21 @@ const Login = function Login() {
     phone: string;
     code: string;
   };
-  const submit = (values: valuesType) => {
-    console.log(values);
-    console.log(FormIns);
+  // 表单提交
+  const submit = async (values: valuesType) => {
+    try {
+      const timer = setTimeout(() => {
+        console.log("ciallo");
+      }, 1000);
+      let oi = new Promise(() => timer);
+      await oi;
+    } catch (error) {}
   };
+  // 发送验证码
   const send = async () => {
     try {
+      console.log("发送验证码");
+
       await FormIns.validateFields(["phone"]); //校验手机号是否正确
     } catch (error) {}
   };
@@ -44,12 +57,12 @@ const Login = function Login() {
         layout="horizontal"
         style={{ "--border-top": "none" }}
         initialValues={{ phone: "", code: "" }}
-        footer={
-          <Button color="primary" type="submit">
-            提交
-          </Button>
-        }
         onFinish={submit}
+        footer={
+          <ButtonAgain color="primary" type="submit">
+            提交
+          </ButtonAgain>
+        }
         form={FormIns}
         requiredMarkStyle={"none"}
         // 去除必选前面的*号(内置的校验)
@@ -57,14 +70,7 @@ const Login = function Login() {
         <Form.Item
           name="phone"
           label="手机号"
-          // rules={[{ validator: validate.phone }]}
-          rules={[
-            { required: true, message: "验证码是必填项" },
-            {
-              pattern: /^d{6}$/,
-              message: "验证码格式错误",
-            },
-          ]}
+          rules={[{ validator: validate.phone }]}
         >
           <Input placeholder="请输入手机号" />
         </Form.Item>
@@ -72,12 +78,23 @@ const Login = function Login() {
         <Form.Item
           name="code"
           label="验证码"
-          rules={[{ validator: validate.code }]}
-          onClick={send}
+          // rules={[{ validator: validate.code }]}
+          rules={[
+            { required: true, message: "验证码是必填项" },
+            {
+              pattern: /^d{6}$/,
+              message: "验证码格式错误",
+            },
+          ]}
           extra={
-            <Button size="small" color="primary">
-              发送验证码
-            </Button>
+            <ButtonAgain
+              size="small"
+              color="primary"
+              disabled={disabled}
+              onClick={send}
+            >
+              {sendText}
+            </ButtonAgain>
           }
         >
           <Input />
