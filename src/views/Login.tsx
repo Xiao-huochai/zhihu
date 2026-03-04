@@ -33,22 +33,26 @@ const Login = function Login() {
     code: string;
   };
   // 表单提交
-  const submit = async (values: valuesType) => {
+  const submit = async () => {
     try {
-      const timer = setTimeout(() => {
-        console.log("ciallo");
-      }, 1000);
-      let oi = new Promise(() => timer);
-      await oi;
+      await FormIns.validateFields(); //什么都不传则对所有的进行校验
+      // 即触发rules写的校验规则
+      let values: valuesType = FormIns.getFieldsValue();
+      console.log(values);
+      await delay(3000);
     } catch (error) {}
   };
   // 发送验证码
   const send = async () => {
     try {
-      console.log("发送验证码");
-
       await FormIns.validateFields(["phone"]); //校验手机号是否正确
+      await delay(3000);
     } catch (error) {}
+  };
+  const delay = (time = 1000) => {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => resolve(), time);
+    });
   };
   return (
     <div className="login-box">
@@ -57,9 +61,9 @@ const Login = function Login() {
         layout="horizontal"
         style={{ "--border-top": "none" }}
         initialValues={{ phone: "", code: "" }}
-        onFinish={submit}
+        // onFinish={submit}
         footer={
-          <ButtonAgain color="primary" type="submit">
+          <ButtonAgain color="primary" onClick={submit}>
             提交
           </ButtonAgain>
         }
@@ -82,7 +86,7 @@ const Login = function Login() {
           rules={[
             { required: true, message: "验证码是必填项" },
             {
-              pattern: /^d{6}$/,
+              pattern: /^\d{6}$/,
               message: "验证码格式错误",
             },
           ]}
