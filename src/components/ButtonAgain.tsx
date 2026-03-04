@@ -13,19 +13,13 @@ interface ButtonAgainProps extends Omit<ButtonProps, "onClick"> {
 
 export default function ButtonAgain(props: ButtonAgainProps) {
   let { children, onClick: handle, ...restProps } = { ...props };
-  console.log("这里有handle");
-  console.log(handle); //
-
   let [loading, setLoading] = useState(false);
 
+  // 防抖处理等待事件处理完后才能再次点击
   const clickHandle = async () => {
-    console.log("为什么这里是undefined");
-    console.log(handle);
-
     if (!handle) return;
     setLoading(true);
     try {
-      // if (!handle) return;
       await handle();
     } catch (error) {
       console.log(error);
