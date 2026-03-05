@@ -9,7 +9,7 @@ const Login = function Login() {
   const [FormIns] = Form.useForm(),
     [disabled, setDisabled] = useState<boolean>(false),
     [sendText, setSendText] = useState<string>("发送验证码"),
-    [countdownTime, setCountdownTime] = useState(0),
+    // [countdownTime, setCountdownTime] = useState(0),
     timerRef = useRef<number | null>(null);
   // 返回的是数组包裹的对象因此需要展开
 
@@ -82,22 +82,20 @@ const Login = function Login() {
   const countdown = (time: number = 30) => {
     // 启动前先清理可能存在的旧定时器
     clearCountdownTimer();
-    setCountdownTime(time);
+    // setCountdownTime(time);
     setSendText(`${time}秒后重发`);
+    let remainingTime = time;
     timerRef.current = setInterval(() => {
-      setCountdownTime((prevTime) => {
-        const newTime = prevTime - 1;
-        // 倒计时结束
-        if (newTime === 0) {
-          clearCountdownTimer();
-          setSendText("发送验证码");
-          setDisabled(false);
-          return 0;
-        }
-        // 倒计时中
-        setSendText(`${newTime}秒后重发`);
-        return newTime;
-      });
+      remainingTime -= 1;
+      // 倒计时结束
+      if (remainingTime === 0) {
+        clearCountdownTimer();
+        setSendText("发送验证码");
+        setDisabled(false);
+        return 0;
+      }
+      // 倒计时中
+      setSendText(`${remainingTime}秒后重发`);
     }, 1000);
   };
 

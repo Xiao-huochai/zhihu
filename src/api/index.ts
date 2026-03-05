@@ -113,13 +113,21 @@ const login = (phone: string, code: string): Promise<loginType> => {
   });
 };
 // 获取登录者信息
-interface QueryUserInfo {
-  id: string;
+
+export interface UserInfo {
+  id: string | number;
   name: string;
-  phone: string;
+  phone: string | number;
   pic: string;
 }
-const queryUserInfo = (): Promise<QueryUserInfo> => http.get("/api/user_info");
+
+export interface UserInfoApi {
+  code: string | number;
+  codeText: string;
+  data: UserInfo;
+}
+
+const queryUserInfo = (): Promise<UserInfoApi> => http.get("/api/user_info");
 
 // ====================== 2. 上传图片 ======================
 // 上传图片的请求参数（FormData格式）
@@ -228,5 +236,6 @@ const api = {
   updateUserInfo,
   storeNews,
   getStoreList,
+  removeStore,
 };
 export default api;
