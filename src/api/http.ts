@@ -82,7 +82,7 @@ const http: HttpFunction = function http(
       "application/x-www-form-urlencoded";
   }
 
-  // 处理Token
+  // 处理token
   const token: string | null = _.storage.get("tk");
   const safeList: string[] = [
     "/user_info",

@@ -90,20 +90,131 @@ const queryStoryExtra = (id?: string): Promise<NewsStoryExtraType> => {
   });
 };
 
+interface phoneCodeType {
+  code: string;
+}
 // 发送验证码
-const sendPhoneCode = (phone: string) => {
+const sendPhoneCode = (phone: string): Promise<phoneCodeType> => {
   return http.post("/api/phone_code", {
     phone,
   });
 };
 
+interface loginType {
+  code: number;
+  codeText: string;
+  token: string;
+}
 // 登录/注册
-const login = (phone: string, code: string) => {
+const login = (phone: string, code: string): Promise<loginType> => {
   return http.post("/api/login", {
     phone,
     code,
   });
 };
+// 获取登录者信息
+interface QueryUserInfo {
+  id: string;
+  name: string;
+  phone: string;
+  pic: string;
+}
+const queryUserInfo = (): Promise<QueryUserInfo> => http.get("/api/user_info");
+
+// ====================== 2. 上传图片 ======================
+// 上传图片的请求参数（FormData格式）
+interface UploadImageParams {
+  file: File; // 文件对象
+}
+// 上传图片的返回值类型
+interface UploadImageResponse {
+  code: number | string;
+  codeText: string;
+  pic: string; // 上传后返回的图片地址
+}
+// 上传图片请求函数（POST + multipart/form-data）
+const uploadImage = (
+  params: UploadImageParams,
+): Promise<UploadImageResponse> => {
+  // 构建FormData（适配multipart/form-data格式）
+  const formData = new FormData();
+  formData.append("file", params.file);
+  // 注意：上传文件时需要设置请求头Content-Type为multipart/form-data（多数http库会自动处理）
+  return http.post("/api/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// ====================== 3. 修改用户信息 ======================
+// 修改用户信息的请求参数
+interface UpdateUserInfoParams {
+  username: string; // 用户名
+  pic: string; // 图片地址（上传图片后返回的pic）
+}
+// 修改用户信息的返回值类型
+interface UpdateUserInfoResponse {
+  code: number | string;
+  codeText: string;
+  data: {
+    id: string | number;
+    name: string;
+    phone: string;
+    pic: string;
+  };
+}
+// 修改用户信息请求函数
+const updateUserInfo = (
+  params: UpdateUserInfoParams,
+): Promise<UpdateUserInfoResponse> => http.post("/api/user_update", params);
+
+// ====================== 4. 收藏新闻 ======================
+// 收藏新闻的请求参数
+interface StoreNewsParams {
+  newsId: string | number; // 新闻ID
+}
+// 收藏新闻的返回值类型
+interface StoreNewsResponse {
+  code: number | string;
+  codeText: string;
+}
+// 收藏新闻请求函数
+const storeNews = (params: StoreNewsParams): Promise<StoreNewsResponse> =>
+  http.post("/api/store", params);
+
+// ====================== 5. 移除收藏 ======================
+// 移除收藏的请求参数（GET请求，参数拼在URL上）
+interface RemoveStoreParams {
+  id: string | number; // 收藏ID
+}
+// 移除收藏的返回值类型
+interface RemoveStoreResponse {
+  code: number | string;
+  codeText: string;
+}
+// 移除收藏请求函数（GET请求，参数通过query传递）
+const removeStore = (params: RemoveStoreParams): Promise<RemoveStoreResponse> =>
+  http.get("/api/store_remove", { params });
+
+// ====================== 6. 获取登录者收藏列表 ======================
+// 获取收藏列表的返回值类型
+interface GetStoreListResponse {
+  code: number | string;
+  codeText: string;
+  data: Array<{
+    id: string | number;
+    userId: string | number;
+    news: {
+      id: string | number;
+      title: string;
+      image: string;
+    };
+  }>;
+}
+// 获取收藏列表请求函数（无参数）
+const getStoreList = (): Promise<GetStoreListResponse> =>
+  http.get("/api/store_list");
 
 const api = {
   queryNewsBefore,
@@ -112,5 +223,10 @@ const api = {
   queryStoryExtra,
   sendPhoneCode,
   login,
+  queryUserInfo,
+  uploadImage,
+  updateUserInfo,
+  storeNews,
+  getStoreList,
 };
 export default api;

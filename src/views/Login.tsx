@@ -1,12 +1,16 @@
 import NavBarAgain from "../components/NavBarAgain";
 import ButtonAgain from "../components/ButtonAgain";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Form, Input, Toast } from "antd-mobile";
+import api from "../api";
 import "./Login.less";
+import _ from "../assets/utils";
 const Login = function Login() {
   const [FormIns] = Form.useForm(),
     [disabled, setDisabled] = useState<boolean>(false),
-    [sendText, setSendText] = useState<string>("发送验证码");
+    [sendText, setSendText] = useState<string>("发送验证码"),
+    [countdownTime, setCountdownTime] = useState(0),
+    timerRef = useRef<number | null>(null);
   // 返回的是数组包裹的对象因此需要展开
 
   // 自定义表单校验规则
@@ -37,8 +41,18 @@ const Login = function Login() {
     try {
       await FormIns.validateFields(); //什么都不传则对所有的进行校验
       // 即触发rules写的校验规则
-      let values: valuesType = FormIns.getFieldsValue();
-      console.log(values);
+      let { phone, code } = FormIns.getFieldsValue();
+      let { code: codeHttp, token } = await api.login(phone, code);
+      if (+codeHttp !== 0) {
+        Toast.show({
+          icon: "fail",
+          content: "登录失败",
+        });
+        FormIns.resetFields(["code"]); //重置code
+        return;
+      }
+      // 登录成功:存token,存储登录者信息到redux,提示，跳转
+      _.storage.set("tk", token);
       await delay(3000);
     } catch (error) {}
   };
@@ -46,7 +60,16 @@ const Login = function Login() {
   const send = async () => {
     try {
       await FormIns.validateFields(["phone"]); //校验手机号是否正确
-      await delay(3000);
+      let phone = FormIns.getFieldValue("phone");
+      let { code } = await api.sendPhoneCode(phone);
+      if (+code !== 0) {
+        Toast.show({
+          icon: "fail",
+          content: "发送失败",
+        });
+      }
+      setDisabled(true);
+      countdown(5);
     } catch (error) {}
   };
   const delay = (time = 1000) => {
@@ -54,6 +77,45 @@ const Login = function Login() {
       setTimeout(() => resolve(), time);
     });
   };
+
+  // 倒计时
+  const countdown = (time: number = 30) => {
+    // 启动前先清理可能存在的旧定时器
+    clearCountdownTimer();
+    setCountdownTime(time);
+    setSendText(`${time}秒后重发`);
+    timerRef.current = setInterval(() => {
+      setCountdownTime((prevTime) => {
+        const newTime = prevTime - 1;
+        // 倒计时结束
+        if (newTime === 0) {
+          clearCountdownTimer();
+          setSendText("发送验证码");
+          setDisabled(false);
+          return 0;
+        }
+        // 倒计时中
+        setSendText(`${newTime}秒后重发`);
+        return newTime;
+      });
+    }, 1000);
+  };
+
+  // 清理定时器的通用方法
+  const clearCountdownTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  // 组件卸载时清理定时器，核心的安全保障
+  useEffect(() => {
+    return () => {
+      clearCountdownTimer();
+    };
+  }, []);
+
   return (
     <div className="login-box">
       <NavBarAgain title="登录/注册" />
