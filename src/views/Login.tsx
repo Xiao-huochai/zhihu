@@ -5,13 +5,27 @@ import { Form, Input, Toast } from "antd-mobile";
 import api from "../api";
 import "./Login.less";
 import _ from "../assets/utils";
+// redux
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { queryUserInfo, updateInfo } from "../store/features/baseSlice";
+import type { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
 const Login = function Login() {
+  // 返回的是数组包裹的对象因此需要展开
   const [FormIns] = Form.useForm(),
     [disabled, setDisabled] = useState<boolean>(false),
     [sendText, setSendText] = useState<string>("发送验证码"),
     // [countdownTime, setCountdownTime] = useState(0),
     timerRef = useRef<number | null>(null);
-  // 返回的是数组包裹的对象因此需要展开
+
+  const navigate = useNavigate();
+  // redux
+  const dispatch = useAppDispatch();
+  const {
+    info: userInfo,
+    loading,
+    error,
+  } = useAppSelector((state: RootState) => state.base);
 
   // 自定义表单校验规则
   const validate = {
@@ -53,7 +67,11 @@ const Login = function Login() {
       }
       // 登录成功:存token,存储登录者信息到redux,提示，跳转
       _.storage.set("tk", token);
-      await delay(3000);
+      // 必须用封装好了对应类型的 否则报错
+      await dispatch(queryUserInfo());
+      navigate(-1);
+
+      // await delay(3000);
     } catch (error) {}
   };
   // 发送验证码

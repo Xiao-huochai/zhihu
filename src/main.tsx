@@ -6,7 +6,7 @@ import App from "./App.tsx";
 import { ConfigProvider } from "antd-mobile";
 import zhCN from "antd-mobile/es/locales/zh-CN";
 
-// redux
+// redux 这里处理过redux了
 import { Provider } from "react-redux";
 import store from "./store/index.ts";
 

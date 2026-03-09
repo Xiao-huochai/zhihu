@@ -6,25 +6,25 @@ import {
 import type { UserInfo } from "../../api";
 import api from "../../api";
 
-const queryUserInfo = createAsyncThunk(
-  "base/queryUserInfo", // action命名空间，格式：slice名/动作名
-  async (_, { rejectWithValue }) => {
+// 异步方法
+export const queryUserInfo = createAsyncThunk(
+  "task/queryUserInfo", // action命名空间，格式：slice名/动作名
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       // 1. 发起请求，指定返回类型为 ApiResponse<UserInfo>
       const response = await api.queryUserInfo();
-
       // 2. 校验接口状态码
       if (response.code !== 0) {
         // 非 0 则抛出错误，用 rejectWithValue 封装错误信息
         console.log("获取用户信息失败 code!==0");
-
         return rejectWithValue({
           code: response.code,
           message: response.codeText || "获取用户信息失败",
         });
       }
-
       // 3. 状态码正确，只返回 data 部分（核心数据）
+      // 也可以直接dispatch触发方法更改状态
+      // dispatch(updateInfo(response.data));
       return response.data;
     } catch (error: any) {
       // 4. 捕获网络错误/接口异常（比如 404、500、网络断开）
@@ -55,13 +55,16 @@ const baseSlice = createSlice({
       console.log(action);
       state.info = action.payload;
     },
+    clearUserInfo(state) {
+      state.info = null;
+    },
   },
   extraReducers: (builder) => {
     // 如果fulfilled了则赋值
     builder
       .addCase(queryUserInfo.fulfilled, (state, action) => {
         state.loading = "succeeded";
-        state.info = action.payload;
+        state.info = action.payload; //也可以dispatch吗
       })
       // 如果fulfilled了则赋值
       .addCase(queryUserInfo.pending, (state) => {
