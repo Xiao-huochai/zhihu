@@ -9,7 +9,7 @@ import _ from "../assets/utils";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { queryUserInfo, updateInfo } from "../store/features/baseSlice";
 import type { RootState } from "../store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 const Login = function Login() {
   // 返回的是数组包裹的对象因此需要展开
   const [FormIns] = Form.useForm(),
@@ -19,13 +19,14 @@ const Login = function Login() {
     timerRef = useRef<number | null>(null);
 
   const navigate = useNavigate();
+  const [usp] = useSearchParams(); //得到问号传参
   // redux
   const dispatch = useAppDispatch();
-  const {
-    info: userInfo,
-    loading,
-    error,
-  } = useAppSelector((state: RootState) => state.base);
+  // const {
+  //   info: userInfo,
+  //   loading,
+  //   error,
+  // } = useAppSelector((state: RootState) => state.base);
 
   // 自定义表单校验规则
   const validate = {
@@ -67,10 +68,14 @@ const Login = function Login() {
       }
       // 登录成功:存token,存储登录者信息到redux,提示，跳转
       _.storage.set("tk", token);
+      Toast.show({
+        icon: "success",
+        content: "登录成功",
+      });
       // 必须用封装好了对应类型的 否则报错
       await dispatch(queryUserInfo());
-      navigate(-1);
-
+      let to = usp.get("to"); //得到问号传参的to 如果没有则跳转到上一级
+      to ? navigate(to, { replace: true }) : navigate(-1);
       // await delay(3000);
     } catch (error) {}
   };
