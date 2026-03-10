@@ -9,8 +9,9 @@ import _ from "../assets/utils";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { queryUserInfo, updateInfo } from "../store/features/baseSlice";
 import type { RootState } from "../store";
-import { useNavigate, useSearchParams } from "react-router-dom";
-const Login = function Login() {
+const Login = function Login(props: any) {
+  let { navigate, usp } = props; //在router里面封装放在props里面的
+
   // 返回的是数组包裹的对象因此需要展开
   const [FormIns] = Form.useForm(),
     [disabled, setDisabled] = useState<boolean>(false),
@@ -18,8 +19,6 @@ const Login = function Login() {
     // [countdownTime, setCountdownTime] = useState(0),
     timerRef = useRef<number | null>(null);
 
-  const navigate = useNavigate();
-  const [usp] = useSearchParams(); //得到问号传参
   // redux
   const dispatch = useAppDispatch();
   // const {
@@ -47,10 +46,7 @@ const Login = function Login() {
       return Promise.resolve();
     },
   };
-  type valuesType = {
-    phone: string;
-    code: string;
-  };
+
   // 表单提交
   const submit = async () => {
     try {

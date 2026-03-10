@@ -3,12 +3,31 @@ import { Route, Routes } from "react-router-dom";
 import { Suspense } from "react";
 import { Mask, SpinLoading } from "antd-mobile";
 import type { RouteItem } from "./routes";
+import {
+  useNavigate,
+  useSearchParams,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 
 const Element = function Element(props: RouteItem) {
   let { component: Component, meta } = props;
   let { title = "知乎日报" } = meta || {};
   document.title = title;
-  return <Component />;
+
+  const navigate = useNavigate(),
+    location = useLocation(),
+    params = useParams(),
+    [usp] = useSearchParams();
+
+  return (
+    <Component
+      location={location}
+      params={params}
+      usp={usp}
+      navigate={navigate}
+    />
+  );
 };
 
 export default function RouterView() {
