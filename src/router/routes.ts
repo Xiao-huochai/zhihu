@@ -20,6 +20,7 @@ export type RouteItem = {
   name: string;
   /** 路由组件（支持普通组件和懒加载组件） */
   component: ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
+
   /** 路由元信息 */
   meta: RouteMeta;
   /** 嵌套路由（预留扩展，可选） */
