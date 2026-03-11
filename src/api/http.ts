@@ -82,7 +82,9 @@ const http: HttpFunction = function http(
       "application/x-www-form-urlencoded";
   }
 
-  // 处理token
+  // 处理token 如果有token的话就不用登录
+  // 也就是页面刷新后还能得到用户数据的权限 不用反复登录
+  //这里就是检查本地是否存有token 这种可以写到请求拦截器里面
   const token: string | null = _.storage.get("tk");
   const safeList: string[] = [
     "/user_info",

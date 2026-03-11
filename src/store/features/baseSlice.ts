@@ -9,7 +9,7 @@ import api from "../../api";
 // 异步方法
 export const queryUserInfo = createAsyncThunk(
   "task/queryUserInfo", // action命名空间，格式：slice名/动作名
-  async (_, { rejectWithValue, dispatch }) => {
+  async (_, { rejectWithValue, dispatch }): Promise<any> => {
     try {
       // 1. 发起请求，指定返回类型为 ApiResponse<UserInfo>
       const response = await api.queryUserInfo();
