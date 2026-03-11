@@ -79,5 +79,5 @@ const baseSlice = createSlice({
   },
 });
 // 得到用于派发的type
-export let { updateInfo } = baseSlice.actions;
+export let { updateInfo, clearUserInfo } = baseSlice.actions;
 export default baseSlice.reducer;

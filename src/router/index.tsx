@@ -1,5 +1,5 @@
 import routes from "./routes";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Suspense, useEffect } from "react";
 import { Mask, SpinLoading, Toast } from "antd-mobile";
 import type { RouteItem } from "./routes";

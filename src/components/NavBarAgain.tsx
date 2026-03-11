@@ -15,6 +15,7 @@ export default function NavBarAgain(props: navBarAgain) {
     else if (location.pathname === `/login` && /^\detail\/\d+$/.test(to)) {
       navigate(to, { replace: true });
     }
+    navigate(-1);
   };
 
   return (
