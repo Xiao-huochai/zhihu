@@ -6,17 +6,24 @@ import {
   LikeOutline,
   MoreOutline,
 } from "antd-mobile-icons";
-import { Badge } from "antd-mobile";
-import { useNavigate, useParams } from "react-router-dom";
+import { Badge, Toast } from "antd-mobile";
+// import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { NewsDetailType, NewsStoryExtraType } from "../api";
 import Page404 from "./Page404";
 import SkeletonAgain from "../components/SkeletonAgain";
 import api from "../api";
 import { flushSync } from "react-dom";
-const Detail = function Detail() {
-  const navigate = useNavigate(),
-    params = useParams();
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { queryUserInfo } from "../store/features/baseSlice";
+import { replace } from "react-router-dom";
+const Detail = function Detail(props: any) {
+  let { navigate, params, location } = props; //location有当前路径
+  console.log(location);
+
+  const dispatch = useAppDispatch();
+  // const navigate = useNavigate(),
+  // params = useParams();
   if (params.id === undefined || null) return <Page404 />;
   let [info, setInfo] = useState<NewsDetailType>(),
     [extra, setExtra] = useState<NewsStoryExtraType>();
@@ -74,6 +81,20 @@ const Detail = function Detail() {
       }
     })();
   }, []);
+  let { base, store } = useAppSelector((state) => state);
+  // 一下是登录收藏的逻辑
+  useEffect(() => {
+    if (!base.info) dispatch(queryUserInfo());
+  }, []);
+  const handleStore = () => {
+    if (!base.info) {
+      Toast.show({
+        icon: "fail",
+        content: "请先登录",
+      });
+      navigate(`/login?to=${location.pathname}`, { replace: true });
+    }
+  };
   return (
     <div className="detail-box">
       {/* 内容 */}
@@ -98,7 +119,7 @@ const Detail = function Detail() {
           <Badge content={extra ? extra.popularity : 0}>
             <LikeOutline></LikeOutline>
           </Badge>
-          <span>
+          <span onClick={handleStore}>
             <StarOutline></StarOutline>
           </span>
           <span>
