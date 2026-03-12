@@ -141,13 +141,8 @@ const storeSlice = createSlice({
       state.error = null;
     },
     removeTargetNews(state, action: PayloadAction<number | string>) {
-      console.log("要删除的ID：", action.payload);
-      // 核心修复：给filter回调添加返回值
       state.data = state.data.filter((item) => {
-        // 1. 修复返回值问题
-        // 2. 统一属性路径（如果打印的item.id是对的，就把item.news.id改成item.id）
         const isNotTarget = +item.id !== +action.payload;
-        console.log("当前item.id：", item.id, "是否保留：", isNotTarget);
         return isNotTarget;
       });
     }, //在视觉上先行动
