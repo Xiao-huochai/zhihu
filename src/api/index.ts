@@ -183,7 +183,7 @@ type StoreNewsParams = {
   newsId: string | number; // 新闻ID
 };
 // 收藏新闻的返回值类型
-type StoreNewsResponse = {
+export type StoreNewsResponse = {
   code: number | string;
   codeText: string;
 };
