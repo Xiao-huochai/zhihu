@@ -8,7 +8,7 @@ import {
 } from "antd-mobile-icons";
 import { Badge, Toast } from "antd-mobile";
 // import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { NewsDetailType, NewsStoryExtraType } from "../api";
 import Page404 from "./Page404";
 import SkeletonAgain from "../components/SkeletonAgain";
@@ -16,11 +16,14 @@ import api from "../api";
 import { flushSync } from "react-dom";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { queryUserInfo } from "../store/features/baseSlice";
-import { replace } from "react-router-dom";
+import {
+  getStoreListAsync,
+  storeNewsAsync,
+  removeStoreAsync,
+} from "../store/features/storeSlice";
+import { removeTargetNews } from "../store/features/storeSlice";
 const Detail = function Detail(props: any) {
   let { navigate, params, location } = props; //location有当前路径
-  console.log(location);
-
   const dispatch = useAppDispatch();
   // const navigate = useNavigate(),
   // params = useParams();
@@ -81,19 +84,69 @@ const Detail = function Detail(props: any) {
       }
     })();
   }, []);
-  let { base, store } = useAppSelector((state) => state);
+  const { info: userInfo } = useAppSelector((state) => state.base);
+  const { data: storeList, code: storeCode } = useAppSelector(
+    (state) => state.store,
+  );
   // 一下是登录收藏的逻辑
   useEffect(() => {
-    if (!base.info) dispatch(queryUserInfo());
-  }, []);
-  const handleStore = () => {
-    if (!base.info) {
+    (async () => {
+      if (!userInfo) {
+        console.log("查看用户是否登录");
+        await dispatch(queryUserInfo());
+        // 获取成功后再获取收藏列表
+        await dispatch(getStoreListAsync());
+      }
+      if (userInfo && !storeList.length) {
+        console.log("获取收藏列表");
+
+        dispatch(getStoreListAsync());
+      }
+    })();
+  }, [dispatch]);
+
+  const isStore = useMemo(() => {
+    if (!storeList.length) return false;
+    return storeList.some((item) => {
+      return +item.news.id === +params.id; //收藏列表id 和路径里的id比较是否收藏过
+    });
+  }, [storeList, params]);
+
+  const handleStore = async () => {
+    if (!userInfo) {
       Toast.show({
         icon: "fail",
         content: "请先登录",
       });
       navigate(`/login?to=${location.pathname}`, { replace: true });
     }
+    // 已经登录:收藏或移除收藏
+    if (isStore) {
+      let newsId = params.id;
+      let item = storeList.find((item) => {
+        return +item.news.id === +newsId;
+      }); //找到当前页面新闻的
+      if (!item) return; //没找到就return 找到了就移除
+      let id = +item.id;
+      await dispatch(removeStoreAsync({ id }));
+      dispatch(removeTargetNews(id));
+      return;
+    }
+    // 收藏
+    try {
+      let newsId: number = +params.id;
+      await dispatch(storeNewsAsync({ newsId }));
+      if (+storeCode !== 0) {
+        Toast.show({
+          icon: "fail",
+          content: "收藏失败",
+        });
+      }
+      Toast.show({
+        icon: "success",
+        content: "收藏成功",
+      });
+    } catch {}
   };
   return (
     <div className="detail-box">
@@ -119,7 +172,7 @@ const Detail = function Detail(props: any) {
           <Badge content={extra ? extra.popularity : 0}>
             <LikeOutline></LikeOutline>
           </Badge>
-          <span onClick={handleStore}>
+          <span onClick={handleStore} className={isStore ? "stored" : ""}>
             <StarOutline></StarOutline>
           </span>
           <span>
