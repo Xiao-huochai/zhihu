@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Toast } from "antd-mobile";
-import styled from "styled-components";
 import NavBarAgain from "../components/NavBarAgain";
 import NewsItem from "../components/NewsItem";
 import SkeletonAgain from "../components/SkeletonAgain";
@@ -8,38 +7,61 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import {
   removeStoreAsync,
   removeTargetNews,
+  getStoreListAsync,
 } from "../store/features/storeSlice";
-import { getStoreListAsync } from "../store/features/storeSlice";
+import { StarOutline } from "antd-mobile-icons";
 import "./Store.less";
-/* 样式 */
-const StoreBox = styled.div`
-  .box {
-    padding: 30px;
-  }
-`;
 
 const Store = function Store() {
   const dispatch = useAppDispatch();
   const { data: storeList } = useAppSelector((state) => state.store);
+
   useEffect(() => {
-    // 第一次加载完毕:如果redux中没有收藏列表,则异步派发获取
     if (storeList.length === 0) dispatch(getStoreListAsync());
-  }, []);
+  }, [dispatch, storeList.length]);
+
+  const handleRemove = async (id: string | number) => {
+    try {
+      dispatch(removeTargetNews(id));
+      await dispatch(removeStoreAsync({ id })).unwrap();
+
+      Toast.show({
+        icon: "success",
+        content: "取消收藏成功",
+      });
+    } catch (err) {
+      Toast.show({
+        icon: "fail",
+        content: "取消收藏失败",
+      });
+      dispatch(getStoreListAsync());
+    }
+  };
 
   return (
     <div className="storeBox">
       <NavBarAgain title="我的收藏" />
-      {storeList ? (
-        <>
-          {storeList.map((item) => {
-            let { id, news } = item;
-            return <NewsItem story={news} key={id} />;
-          })}
-        </>
+      {storeList.length > 0 ? (
+        storeList.map((item) => {
+          const { id, news } = item;
+          return (
+            <div className="stored-item" key={id}>
+              <NewsItem story={news} />
+              <StarOutline
+                className="stored"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove(id);
+                }}
+              />
+            </div>
+          );
+        })
       ) : (
         <SkeletonAgain />
       )}
     </div>
   );
 };
+
 export default Store;
