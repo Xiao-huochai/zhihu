@@ -38,6 +38,7 @@
     "postcss-pxtorem": "^6.1.0",
     "qs": "^6.15.0",
     "react": "^18.3.1",
+    "react-activation": "^0.13.4",
     "react-dom": "^18.3.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.3",

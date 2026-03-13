@@ -15,7 +15,6 @@ type Props = {
 
 export default function NewsItem({ story }: Props) {
   if (!story) return null;
-
   const image =
     "images" in story
       ? Array.isArray(story.images)

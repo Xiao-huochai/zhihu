@@ -27,6 +27,8 @@ export type RouteItem = {
   children?: RouteItem[];
   /** 是否为索引路由（可选） */
   index?: boolean;
+  // 是否进行页面缓存 react-activation用的
+  keepAlive?: boolean;
 };
 
 const routes: RouteItem[] = [
@@ -34,6 +36,7 @@ const routes: RouteItem[] = [
     path: "/",
     name: "home",
     component: Home,
+    keepAlive: true,
     meta: {
       title: "知乎日报-WebApp",
     },

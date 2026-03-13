@@ -10,6 +10,8 @@ import zhCN from "antd-mobile/es/locales/zh-CN";
 import { Provider } from "react-redux";
 import store from "./store/index.ts";
 
+import { AliveScope } from "react-activation";
+
 import "./main.less";
 /* 处理移动端最大宽度和根字体大小（TS 版本） */
 (function () {
@@ -39,8 +41,10 @@ import "./main.less";
 })();
 createRoot(document.getElementById("root")!).render(
   <ConfigProvider locale={zhCN}>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <AliveScope>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </AliveScope>
   </ConfigProvider>,
 );

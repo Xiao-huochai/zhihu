@@ -13,6 +13,7 @@ import { useAppSelector, useAppDispatch } from "../hooks";
 import { queryUserInfo } from "../store/features/baseSlice";
 import type { RootState } from "../store";
 import _ from "../assets/utils";
+import KeepAlive from "react-activation";
 const Element = function Element(props: RouteItem) {
   let { component: Component, meta, path } = props;
   const navigate = useNavigate(),
@@ -125,14 +126,18 @@ export default function RouterView() {
     >
       <Routes>
         {routes.map((item) => {
-          let { name, path } = item;
-          return (
-            <Route
-              key={name}
-              path={path}
-              element={<Element {...item} />}
-            ></Route>
+          let { name, path, keepAlive } = item;
+          // 基础元素
+          const routeElement = <Element {...item} />;
+
+          // 如果需要缓存，用 KeepAlive 包裹
+          const finalElement = keepAlive ? (
+            <KeepAlive cacheKey={name}>{routeElement}</KeepAlive>
+          ) : (
+            routeElement
           );
+
+          return <Route key={name} path={path} element={finalElement}></Route>;
         })}
       </Routes>
     </Suspense>
