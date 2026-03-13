@@ -131,9 +131,6 @@ const queryUserInfo = (): Promise<UserInfoApi> => http.get("/api/user_info");
 
 // ====================== 2. 上传图片 ======================
 // 上传图片的请求参数（FormData格式）
-type UploadImageParams = {
-  file: File; // 文件对象
-};
 // 上传图片的返回值类型
 type UploadImageResponse = {
   code: number | string;
@@ -141,12 +138,10 @@ type UploadImageResponse = {
   pic: string; // 上传后返回的图片地址
 };
 // 上传图片请求函数（POST + multipart/form-data）
-const uploadImage = (
-  params: UploadImageParams,
-): Promise<UploadImageResponse> => {
+const uploadImage = (file: File): Promise<UploadImageResponse> => {
   // 构建FormData（适配multipart/form-data格式）
   const formData = new FormData();
-  formData.append("file", params.file);
+  formData.append("file", file);
   // 注意：上传文件时需要设置请求头Content-Type为multipart/form-data（多数http库会自动处理）
   return http.post("/api/upload", formData, {
     headers: {
