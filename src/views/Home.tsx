@@ -102,7 +102,7 @@ const Home = function Home() {
                 ) : null}
                 <div className="list">
                   {stories.map((story) => {
-                    return <NewsItem {...story} key={story.id}></NewsItem>;
+                    return <NewsItem story={story} key={story.id}></NewsItem>;
                   })}
                 </div>
               </div>
