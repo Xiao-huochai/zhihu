@@ -3,7 +3,7 @@ import NavBarAgain from "../components/NavBarAgain";
 import ButtonAgain from "../components/ButtonAgain";
 import { ImageUploader, Input, Toast } from "antd-mobile";
 import api from "../api";
-import { queryUserInfo, updateInfo } from "../store/features/baseSlice";
+import { queryUserInfo } from "../store/features/baseSlice";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import "./Update.less";
 import { type ImageUploadItem } from "antd-mobile";
@@ -28,7 +28,7 @@ const Update = function Update(props: any) {
   const uploadImage = async (file: File): Promise<ImageUploadItem> => {
     let temp = "";
     try {
-      let { code, pic, codeText } = await api.uploadImage(file);
+      let { code, pic } = await api.uploadImage(file);
       if (+code !== 0) {
         Toast.show({
           icon: "fail",
