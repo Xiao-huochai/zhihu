@@ -27,7 +27,6 @@ export const queryUserInfo = createAsyncThunk(
       // dispatch(updateInfo(response.data));
       return response.data;
     } catch (error: any) {
-      // 4. 捕获网络错误/接口异常（比如 404、500、网络断开）
       return rejectWithValue({
         code: 1,
         message: error.message || "网络异常，获取用户信息失败",
